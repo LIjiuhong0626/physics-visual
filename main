@@ -3,6 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
+
 # --- 页面配置 ---
 st.set_page_config(page_title="重庆高考2024-15题", layout="wide")
 
