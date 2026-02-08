@@ -26,7 +26,7 @@ plt.rcParams.update({
     "axes.facecolor": BG_COLOR, "figure.facecolor": BG_COLOR,
     "text.color": TEXT_COLOR, "axes.labelcolor": TEXT_COLOR,
     "xtick.color": TEXT_COLOR, "ytick.color": TEXT_COLOR,
-    "grid.color": GRID_COLOR, "font.sans-serif": ["Arial Unicode MS", "Heiti TC"]
+    "grid.color": GRID_COLOR, "font.sans-serif": ["SimHei", "Microsoft YaHei", "Arial Unicode MS", "DejaVu Sans", "sans-serif"]
 })
 
 # --- 自定义 CSS ---
@@ -105,8 +105,15 @@ def compute_corrected_trajectory(a, n, h):
     fall_y = h_fall - 0.5 * g * t_vals**2
     fall_points = np.column_stack((fall_x, fall_y))
     
-    # 理论位移公式: s = 4 * sqrt(20anh - (nh)^2)
+    # --- 在计算 s_theory 之后添加截断逻辑 ---
     s_theory = 4 * np.sqrt(20*a*nh - nh**2)
+
+# 定义物理上的理论最大位移 (当 n=1, h=30/7a 时)
+    S_MAX_PHYSICAL = 4 * np.sqrt(20 * 1.0 * (30/7) - (30/7)**2) # 约 25.95a
+
+if s_theory > S_MAX_PHYSICAL:
+    s_theory = S_MAX_PHYSICAL
+    status = "MAX_REACHED" # 可以加一个特殊状态提醒用户
     
     return np.array(traj_points), fall_points, final_R, s_theory, "SUCCESS"
 
