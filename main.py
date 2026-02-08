@@ -111,9 +111,9 @@ def compute_corrected_trajectory(a, n, h):
 # 定义物理上的理论最大位移 (当 n=1, h=30/7a 时)
     S_MAX_PHYSICAL = 4 * np.sqrt(20 * 1.0 * (30/7) - (30/7)**2) # 约 25.95a
 
-if s_theory > S_MAX_PHYSICAL:
-    s_theory = S_MAX_PHYSICAL
-    status = "MAX_REACHED" # 可以加一个特殊状态提醒用户
+    if s_theory > S_MAX_PHYSICAL:
+        s_theory = S_MAX_PHYSICAL
+        status = "MAX_REACHED" # 可以加一个特殊状态提醒用户
     
     return np.array(traj_points), fall_points, final_R, s_theory, "SUCCESS"
 
