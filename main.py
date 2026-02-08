@@ -1,4 +1,4 @@
-import streamlit as st
+]import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -171,7 +171,7 @@ with col_map:
     ax.axhline(0, color=GRID_LINE, lw=1)
     # 坐标系内部右下角水印
     # 坐标系内左上角水印
-    ax.text(0.02, 0.98, 'xiaohongshu ID: 851015711', 
+    ax.text(0.02, 0.98, 'xiaohongshu ID: 851015711 | douyin ID: 383604055', 
         transform=ax.transAxes,
         fontsize=9, color='#666666', ha='left', va='top', alpha=0.7)
     
