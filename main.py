@@ -22,9 +22,9 @@ TEXT_TITLE   = "#555550"      # 标题
 GRID_LINE    = "#D9D5CF"      # 网格
 
 # 莫兰迪轨迹色（低饱和、白底清晰）
-COLOR_M      = "#336699"
-COLOR_N      = "#228B72"
-COLOR_PROJ   = "#CC3333"
+COLOR_M      = "#336699"  # 深钢蓝 (Steel Blue)
+COLOR_N      = "#228B72"  # 深海绿 (Ocean Green)
+COLOR_PROJ   = "#CC3333"  # 朱红 (Crimson Red)
 
 plt.rcParams.update({
     "axes.facecolor": BG_MAIN,
@@ -171,9 +171,9 @@ with col_map:
     ax.axhline(0, color=GRID_LINE, lw=1)
     # 坐标系内部右下角水印
     # 坐标系内左上角水印
-    ax.text(0.02, 0.98, '小红书/抖音：赛诺的物理可视化', 
-            transform=ax.transAxes,
-            fontsize=9, color='#777777', ha='left', va='top', alpha=0.7)
+    ax.text(0.02, 0.98, 'xiaohongshu ID: 851015711', 
+        transform=ax.transAxes,
+        fontsize=9, color='#666666', ha='left', va='top', alpha=0.7)
     
     ax.scatter([0, 0], [10*a, 10*a+h], c=[COLOR_M, COLOR_N], s=100, zorder=10)
     ax.text(0.5, 10*a, "M", color=COLOR_M, fontsize=12, weight="bold")
@@ -182,11 +182,11 @@ with col_map:
     if len(traj_data) > 0:
         mask_m = traj_data[:, 2] == 0
         mask_n = traj_data[:, 2] == 1
-        ax.plot(traj_data[mask_m, 0], traj_data[mask_m, 1], color=COLOR_M, lw=2.5, label="绕M段")
-        ax.plot(traj_data[mask_n, 0], traj_data[mask_n, 1], color=COLOR_N, lw=2.5, label="绕N段")
+        ax.plot(traj_data[mask_m, 0], traj_data[mask_m, 1], color=COLOR_M, lw=2.5, label="Loop M")
+        ax.plot(traj_data[mask_n, 0], traj_data[mask_n, 1], color=COLOR_N, lw=2.5, label="Loop N")
     
     if status in ["SUCCESS", "MAX_REACHED"]:
-        ax.plot(fall_data[:, 0], fall_data[:, 1], color=COLOR_PROJ, lw=3, linestyle='--', label="平抛轨迹")
+        ax.plot(fall_data[:, 0], fall_data[:, 1], color=COLOR_PROJ, lw=3, linestyle='--', label="Projectile")
         ax.scatter([s_val], [0], color=COLOR_PROJ, s=180, marker='*', zorder=20)
         ax.text(s_val, -1.5, f"P (s={s_val:.2f}a)", ha='center', color=COLOR_PROJ, fontsize=11, weight='bold')
 
