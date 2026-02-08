@@ -38,7 +38,7 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("分段缠绕与临界断裂可视化")
+st.title("重庆高考2024-15题")
 
 # --- 侧边栏交互 ---
 with st.sidebar:
