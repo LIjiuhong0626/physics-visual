@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+# --- 页面配置 ---
+st.set_page_config(page_title="重庆高考2024-15题", layout="wide")
+
 hide_menu_style = """
         <style>
         #MainMenu {visibility: hidden;}
@@ -10,9 +13,6 @@ hide_menu_style = """
         </style>
         """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
-
-# --- 页面配置 ---
-st.set_page_config(page_title="重庆高考2024-15题", layout="wide")
 
 # --- 配色方案 (Morandi Dark) ---
 BG_COLOR = "#1e1e1e"
@@ -26,7 +26,8 @@ plt.rcParams.update({
     "axes.facecolor": BG_COLOR, "figure.facecolor": BG_COLOR,
     "text.color": TEXT_COLOR, "axes.labelcolor": TEXT_COLOR,
     "xtick.color": TEXT_COLOR, "ytick.color": TEXT_COLOR,
-    "grid.color": GRID_COLOR, "font.sans-serif": ["SimHei", "Microsoft YaHei", "Arial Unicode MS", "DejaVu Sans", "sans-serif"]
+    "grid.color": GRID_COLOR, "font.sans-serif": ["SimHei", "Microsoft YaHei", "Arial Unicode MS", "DejaVu Sans", "sans-serif"],
+    "axes.unicode_minus": False
 })
 
 # --- 自定义 CSS ---
@@ -53,24 +54,21 @@ with st.sidebar:
         h = st.slider("MN 间距 h (a)", 0.1, 5.0, 1.0, step=0.01)
     elif "最小值" in config_mode:
         n = 1
-        h = 5/3  # nh = 5/3a
+        h = 5/3
     else:
         n = 1
-        h = 30/7 # n=1 时的最大 nh
+        h = 30/7
 
-# --- 核心物理引擎 (整合断裂判定) ---
+# --- 核心物理引擎 ---
 def compute_corrected_trajectory(a, n, h):
     L0 = 10 * a
     dt = 0.02
     nh = n * h
-    
-    # 【核心判定】只有 nh >= 5/3a 时，最低点拉力才可能达到 12mg
     is_breakable = nh >= (5/3 * a)
     
     traj_points = []
     current_R = L0
     
-    # 模拟 n 圈旋转轨迹
     for i in range(n):
         # 阶段 1：右半圆 (绕 M)
         angles_up = np.arange(-np.pi/2, np.pi/2, dt)
@@ -83,77 +81,80 @@ def compute_corrected_trajectory(a, n, h):
         angles_down = np.arange(np.pi/2, 1.5*np.pi, dt)
         for theta in angles_down:
             traj_points.append([R_down * np.cos(theta), (10*a + h) + R_down * np.sin(theta), 1, R_down])
-        
         current_R -= 2 * h
 
     final_R = 10*a - 2*nh
     
-    # 几何与物理合法性检查
+    # 状态判定
     if final_R <= 0:
         return np.array(traj_points), np.array([]), 0, 0, "GEOM_ERR"
     if not is_breakable:
         return np.array(traj_points), np.array([]), final_R, 0, "FORCE_ERR"
 
-    # 满足断裂条件，计算平抛
-    # v_n^2 = 60ga + 2gR_n [根据答案推导]
-    v_break = np.sqrt(60*g*a + 2*g*final_R)
+    # 根据公式 s^2 = 16 * (20a*nh - (nh)^2) 计算 s
+    # 这是一个开口向下的抛物线关系
+    s_sq = 16 * (20 * a * nh - nh**2)
+    s_calc = np.sqrt(max(0, s_sq))
+    
+    # 物理极值判定：nh = 30/7a 时的 s 值
+    S_MAX_PHYSICAL = 4 * np.sqrt(20 * 1.0 * (30/7) - (30/7)**2) 
+
+    # 如果数学公式计算出的 nh 超过了物理上限，锁定在最大物理位移
+    if nh > 30/7 * a:
+        s_val = S_MAX_PHYSICAL
+        status = "MAX_REACHED"
+    else:
+        s_val = s_calc
+        status = "SUCCESS"
+
+    # 计算平抛运动轨迹用于绘图 (根据 s_val 反推初速度)
     h_fall = 10*a - final_R
     t_fall = np.sqrt(2 * h_fall / g)
+    v_break = s_val / t_fall
+    
     t_vals = np.arange(0, t_fall, dt)
+    fall_points = np.column_stack((v_break * t_vals, h_fall - 0.5 * g * t_vals**2))
     
-    fall_x = v_break * t_vals
-    fall_y = h_fall - 0.5 * g * t_vals**2
-    fall_points = np.column_stack((fall_x, fall_y))
-    
-    # --- 在计算 s_theory 之后添加截断逻辑 ---
-    s_theory = 4 * np.sqrt(20*a*nh - nh**2)
-
-# 定义物理上的理论最大位移 (当 n=1, h=30/7a 时)
-    S_MAX_PHYSICAL = 4 * np.sqrt(20 * 1.0 * (30/7) - (30/7)**2) # 约 25.95a
-
-    if s_theory > S_MAX_PHYSICAL:
-        s_theory = S_MAX_PHYSICAL
-        status = "MAX_REACHED" # 可以加一个特殊状态提醒用户
-    
-    return np.array(traj_points), fall_points, final_R, s_theory, "SUCCESS"
+    return np.array(traj_points), fall_points, final_R, s_val, status
 
 # 计算数据
 traj_data, fall_data, R_final, s_val, status = compute_corrected_trajectory(a, n, h)
 
-# --- 绘图与交互 ---
+# --- 绘图 ---
 col_map, col_data = st.columns([3, 1])
 
 with col_map:
     if status == "GEOM_ERR":
-        st.error(f"几何错误：当 h={h:.2f}a 时，绳子在第 {n} 圈前就已耗尽。")
+        st.error(f"几何错误：绳子已耗尽。")
     elif status == "FORCE_ERR":
-        st.warning(f"物理警告：当前 nh = {n*h:.2f}a < 1.67a。拉力不足 12mg，绳索不会断裂！")
-    
+        st.warning(f"物理警告：nh < 1.67a，拉力不足以使绳子断裂。")
+    elif status == "MAX_REACHED":
+        st.info("提示：nh > 4.29a，超出圆周运动模型边界，位移取极大值。")
+
     fig, ax = plt.subplots(figsize=(10, 8))
     ax.set_aspect('equal')
     ax.set_xlim(-15 * a, max(40 * a, s_val + 5*a))
     ax.set_ylim(-2 * a, 22 * a)
-    ax.axhline(0, color=GRID_COLOR, lw=1) # 地面
+    ax.axhline(0, color=GRID_COLOR, lw=1)
     
-    # 绘制钉子
+    # 钉子
     ax.scatter([0, 0], [10*a, 10*a+h], c=[SECONDARY_COLOR, ACCENT_COLOR], s=100, zorder=10)
     ax.text(0.5, 10*a, "M", color=SECONDARY_COLOR)
     ax.text(0.5, 10*a+h, "N", color=ACCENT_COLOR)
     
-    # 分段绘制轨迹
+    # 轨迹
     if len(traj_data) > 0:
         mask_m = traj_data[:, 2] == 0
         mask_n = traj_data[:, 2] == 1
-        ax.plot(traj_data[mask_m, 0], traj_data[mask_m, 1], color=SECONDARY_COLOR, lw=1, alpha=0.5, label="绕M段")
-        ax.plot(traj_data[mask_n, 0], traj_data[mask_n, 1], color=ACCENT_COLOR, lw=1, alpha=0.5, label="绕N段")
+        ax.plot(traj_data[mask_m, 0], traj_data[mask_m, 1], color=SECONDARY_COLOR, lw=1.5, label="绕M段")
+        ax.plot(traj_data[mask_n, 0], traj_data[mask_n, 1], color=ACCENT_COLOR, lw=1.5, label="绕N段")
     
-    # 绘制平抛轨迹与落点
-    if status == "SUCCESS":
-        ax.plot(fall_data[:, 0], fall_data[:, 1], color=PRIMARY_COLOR, lw=2, label="平抛轨迹")
+    if status in ["SUCCESS", "MAX_REACHED"]:
+        ax.plot(fall_data[:, 0], fall_data[:, 1], color=PRIMARY_COLOR, lw=2, linestyle='--', label="平抛轨迹")
         ax.scatter([s_val], [0], color=PRIMARY_COLOR, s=150, marker='*', zorder=20)
         ax.text(s_val, -1.5, f"P (s={s_val:.2f}a)", ha='center', color=PRIMARY_COLOR, fontweight='bold')
 
-    # 进度条交互
+    # 动画进度
     total_len = len(traj_data) + len(fall_data)
     frame = st.slider("拖动查看运动过程", 0, total_len - 1, 0 if total_len > 0 else 0)
     
@@ -164,7 +165,6 @@ with col_map:
             ax.plot([pivot[0], curr_pos[0]], [pivot[1], curr_pos[1]], 'w-', alpha=0.3)
         else:
             curr_pos = fall_data[frame - len(traj_data)]
-        
         ball = patches.Circle(curr_pos, 0.4*a, color=PRIMARY_COLOR, zorder=15)
         ax.add_patch(ball)
 
@@ -172,20 +172,18 @@ with col_map:
     st.pyplot(fig)
 
 with col_data:
-    st.subheader("临界状态看板")
-    st.write(f"当前积 $nh = {n*h:.2f}a$")
+    st.subheader("数值看板")
+    st.metric("当前 nh", f"{n*h:.2f} a")
     
-    # 只有成功断裂才显示具体位移
-    if status == "SUCCESS":
+    if status in ["SUCCESS", "MAX_REACHED"]:
         st.metric("水平位移 s", f"{s_val:.2f} a")
-        st.metric("断裂高度", f"{10*a - R_final:.2f} a")
+        st.metric("剩余长度 R_n", f"{R_final:.2f} a")
     else:
-        st.metric("水平位移 s", "N/A (未断裂)")
+        st.metric("水平位移 s", "N/A")
         
     st.markdown("---")
-    st.write("**理论边界：**")
+    st.write("**物理方程：**")
+    st.latex(r"s^2 = 16(20a \cdot nh - (nh)^2)")
+    st.write("**理论参考：**")
     st.latex(r"nh_{min} = 1.67a")
-    st.latex(r"s_{min} = 22.11a")
-    
-    if status == "SUCCESS":
-        st.info("满足断裂条件：\n$nh \ge 1.67a$")
+    st.latex(r"s_{max} = 25.95a")
