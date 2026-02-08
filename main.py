@@ -26,7 +26,7 @@ plt.rcParams.update({
     "axes.facecolor": BG_COLOR, "figure.facecolor": BG_COLOR,
     "text.color": TEXT_COLOR, "axes.labelcolor": TEXT_COLOR,
     "xtick.color": TEXT_COLOR, "ytick.color": TEXT_COLOR,
-    "grid.color": GRID_COLOR, "font.sans-serif": ["Arial Unicode MS", "Heiti TC"]
+    "grid.color": GRID_COLOR, "font.sans-serif": ["Arial Unicode MS", "Heiti TC", "Arial Unicode MS"]
 })
 
 # --- 自定义 CSS ---
