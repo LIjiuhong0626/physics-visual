@@ -3,15 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-# # ========== 每个分支只改这一行 ==========
-# PASSWORD = "cqgk202415abcd"
-# # =======================================
-
-# pw = st.text_input("请输入访问密码", type="password")
-# if pw != PASSWORD:
-#     st.warning("密码错误，请联系赛诺获取正确密码")
-#     st.stop()
-
 def check_password():
     """如果密码正确则返回 True，否则显示输入框并返回 False"""
 
@@ -49,18 +40,16 @@ if check_password():
             </style>
             """
     st.markdown(hide_menu_style, unsafe_allow_html=True)
+
+    BG_MAIN      = "#F6F4F0"      
+    BG_SIDEBAR   = "#EFEBE5"      
+    TEXT_NORMAL  = "#3A3A38"      
+    TEXT_TITLE   = "#555550"      
+    GRID_LINE    = "#D9D5CF"      
     
-    # ====================== 莫兰迪浅色系（最终定稿）======================
-    BG_MAIN      = "#F6F4F0"      # 主背景（暖米白）
-    BG_SIDEBAR   = "#EFEBE5"      # 侧边栏（浅莫兰迪）
-    TEXT_NORMAL  = "#3A3A38"      # 文字（深灰，绝对清晰）
-    TEXT_TITLE   = "#555550"      # 标题
-    GRID_LINE    = "#D9D5CF"      # 网格
-    
-    # 莫兰迪轨迹色（低饱和、白底清晰）
-    COLOR_M      = "#336699"  # 深钢蓝 (Steel Blue)
-    COLOR_N      = "#228B72"  # 深海绿 (Ocean Green)
-    COLOR_PROJ   = "#CC3333"  # 朱红 (Crimson Red)
+    COLOR_M      = "#336699"  
+    COLOR_N      = "#228B72"  
+    COLOR_PROJ   = "#CC3333"  
     
     plt.rcParams.update({
         "axes.facecolor": BG_MAIN,
@@ -74,7 +63,7 @@ if check_password():
         "axes.unicode_minus": False
     })
     
-    # --- 全局 CSS ---
+
     st.markdown(f"""
     <style>
         
@@ -135,7 +124,6 @@ if check_password():
             n = 1
             h = 30/7
     
-    # --- 核心物理引擎（完全不变）---
     def compute_corrected_trajectory(a, n, h):
         L0 = 10 * a
         dt = 0.02
@@ -200,15 +188,12 @@ if check_password():
             st.info("提示：nh > 4.29a，超出圆周运动模型边界，位移取极大值。")
     
         fig, ax = plt.subplots(figsize=(10, 8))
-        # 图表内部水印（截图一定会带上，防搬运）
-        # 图表内部右下角水印
         
         ax.set_aspect('equal')
         ax.set_xlim(-15 * a, max(40 * a, s_val + 5*a))
         ax.set_ylim(-2 * a, 22 * a)
         ax.axhline(0, color=GRID_LINE, lw=1)
-        # 坐标系内部右下角水印
-        # 坐标系内左上角水印
+   
         ax.text(0.02, 0.98, 'xiaohongshu ID: 851015711 | douyin ID: 383604055', 
             transform=ax.transAxes,
             fontsize=9, color='#666666', ha='left', va='top', alpha=0.7)
@@ -249,7 +234,6 @@ if check_password():
             
             for i, x in enumerate(x_coords):
                 for j, y in enumerate(y_coords):
-                    # 奇数列向上偏移一点，形成交错效果
                     y_final = y + (ylim[1]-ylim[0])/density/2 if i % 2 == 0 else y
                     ax.text(x, y_final, text, fontsize=11, color='#888888',
                             alpha=0.12, rotation=25, ha='center', va='center', zorder=0, clip_on=True)
