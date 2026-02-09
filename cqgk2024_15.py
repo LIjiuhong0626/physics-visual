@@ -3,6 +3,36 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+import streamlit as st
+
+# 注入增强版 CSS
+st.markdown("""
+    <style>
+    /* 1. 隐藏右下角管理员悬浮头像/菜单 */
+    div[data-testid="stStatusWidget"], 
+    .stDeployButton, 
+    #viewer-badge {
+        display: none !important;
+    }
+
+    /* 2. 隐藏底部可能出现的 Created by 容器 */
+    [data-testid="stDecoration"], 
+    footer {
+        display: none !important;
+    }
+
+    /* 3. 彻底抹除右下角悬浮内容 */
+    iframe[title="Manage app"] { 
+        display: none !important; 
+    }
+    
+    /* 4. 针对移动端特殊按钮 */
+    button[title="View menu"] {
+        display: none !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 def check_password():
     """如果密码正确则返回 True，否则显示输入框并返回 False"""
 
