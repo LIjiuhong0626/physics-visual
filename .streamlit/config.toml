@@ -1,7 +1,9 @@
 [client]
-# 强制开启“简洁模式”，会隐藏大部分工具栏
+# 将工具栏模式设为 minimal，这会隐藏大部分 GitHub 关联按钮
 toolbarMode = "minimal"
+# 明确禁用查看源代码
+showErrorDetails = false
 
-[browser]
-# 禁用收集遥测数据（可选）
-gatherUsageStats = false
+[ui]
+# 有些版本支持通过此项隐藏
+hideTopBar = true
