@@ -3,6 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+# ========== 每个分支只改这一行 ==========
+PASSWORD = "stu_2025_cq15_XXXX"
+# =======================================
+
+pw = st.text_input("请输入访问密码", type="password")
+if pw != PASSWORD:
+    st.warning("密码错误，请联系赛诺获取正确密码")
+    st.stop()
+
 # --- 页面配置 ---
 st.set_page_config(page_title="重庆高考2024-15题", layout="wide")
 
