@@ -204,7 +204,7 @@ with col_map:
         ball = patches.Circle(curr_pos, 0.4*a, color=COLOR_PROJ, zorder=15)
         ax.add_patch(ball)
 
-    def add_sparse_watermark(ax, text, density=7):
+    def add_sparse_watermark(ax, text, density=5):
         xlim = ax.get_xlim()
         ylim = ax.get_ylim()
         x_coords = np.linspace(xlim[0], xlim[1], density)
@@ -215,8 +215,8 @@ with col_map:
                 # 奇数列向上偏移一点，形成交错效果
                 y_final = y + (ylim[1]-ylim[0])/density/2 if i % 2 == 0 else y
                 ax.text(x, y_final, text, fontsize=11, color='#888888',
-                        alpha=0.1, rotation=25, ha='center', va='center', zorder=0)
-    add_sparse_watermark(ax, "赛诺的物理可视化", density=5)
+                        alpha=0.12, rotation=25, ha='center', va='center', zorder=0)
+    add_sparse_watermark(ax, "xiaohongshu: 851015711 | douyin: 383604055", density=5)
 
     ax.legend(loc='upper right', facecolor=BG_MAIN, edgecolor=GRID_LINE)
     st.pyplot(fig)
