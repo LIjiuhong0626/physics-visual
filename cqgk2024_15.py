@@ -3,6 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+st.markdown("""
+    <style>
+    /* 隐藏右下角的管理员头像/菜单 */
+    #viewer-badge {display: none !important;}
+    
+    /* 隐藏手机端可能出现的悬浮操作按钮 */
+    [data-testid="stStatusWidget"] {display: none !important;}
+    </style>
+    """, unsafe_allow_html=True)
+
 def check_password():
     """如果密码正确则返回 True，否则显示输入框并返回 False"""
 
