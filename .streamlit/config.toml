@@ -1,0 +1,7 @@
+[toolbar]
+# 隐藏右上角的菜单（包括 View source）
+viewScriptSource = "none"
+
+[client]
+# 隐藏右下角的 Streamlit 标识和菜单（较新版本支持）
+toolbarMode = "minimal"
