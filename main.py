@@ -155,6 +155,7 @@ traj_data, fall_data, R_final, s_val, status = compute_corrected_trajectory(a, n
 col_map, col_data = st.columns([3, 1])
 
 with col_map:
+
     if status == "GEOM_ERR":
         st.error("几何错误：绳子已耗尽。")
     elif status == "FORCE_ERR":
@@ -215,7 +216,7 @@ with col_map:
                 # 奇数列向上偏移一点，形成交错效果
                 y_final = y + (ylim[1]-ylim[0])/density/2 if i % 2 == 0 else y
                 ax.text(x, y_final, text, fontsize=11, color='#888888',
-                        alpha=0.12, rotation=25, ha='center', va='center', zorder=0)
+                        alpha=0.12, rotation=25, ha='center', va='center', zorder=0, clip_on=True)
     add_sparse_watermark(ax, "xiaohongshu: 851015711 | douyin: 383604055", density=5)
 
     ax.legend(loc='upper right', facecolor=BG_MAIN, edgecolor=GRID_LINE)
