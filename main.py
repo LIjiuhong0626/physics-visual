@@ -63,7 +63,7 @@ st.markdown(f"""
         padding: 10px;
     }}
     body::after {{
-        content: "小红书/抖音：赛诺的物理可视化";
+        content: "小红书/抖音/B站：赛诺的物理可视化";
         position: fixed;
         left: 15px;
         bottom: 15px;
