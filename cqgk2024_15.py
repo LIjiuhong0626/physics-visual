@@ -34,7 +34,7 @@ def check_password():
     )
     
     if "password_correct" in st.session_state and not st.session_state["password_correct"]:
-        st.error("😕 密码错误，请重试")
+        st.error("😕 密码错误，请联系赛诺获取正确密码")
         
     return False
     
