@@ -42,7 +42,6 @@ plt.rcParams.update({
 st.markdown(f"""
 <style>
     
-    
     .stApp {{
         background-color: {BG_MAIN};
         color: {TEXT_NORMAL};
@@ -63,22 +62,24 @@ st.markdown(f"""
         border-radius: 6px;
         padding: 10px;
     }}
-    .stApp::after {{
-        content: "小红书/抖音：赛诺的物理可视化"; /* 这里改你的文字 */
+    body::after {{
+        content: "小红书/抖音：赛诺的物理可视化";
         position: fixed;
+        left: 15px;
         bottom: 15px;
-        right: 20px;
         font-size: 14px;
-        color: #888888; /* 水印颜色：浅灰，不抢眼 */
+        color: #888888;
         opacity: 0.7;
-        z-index: 999;
-        pointer-events: none; /* 不影响点击 */
+        z-index: 999999 !important; /* 最高层级 */
+        pointer-events: none;
+        background: transparent;
     }}
+
 
 </style>
 """, unsafe_allow_html=True)
 
-st.title("重庆高考2024-15题")
+st.title("重庆高考物理2024-15题")
 
 # --- 侧边栏 ---
 with st.sidebar:
@@ -202,6 +203,20 @@ with col_map:
             curr_pos = fall_data[frame - len(traj_data)]
         ball = patches.Circle(curr_pos, 0.4*a, color=COLOR_PROJ, zorder=15)
         ax.add_patch(ball)
+
+    def add_sparse_watermark(ax, text, density=7):
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+        x_coords = np.linspace(xlim[0], xlim[1], density)
+        y_coords = np.linspace(ylim[0], ylim[1], density)
+        
+        for i, x in enumerate(x_coords):
+            for j, y in enumerate(y_coords):
+                # 奇数列向上偏移一点，形成交错效果
+                y_final = y + (ylim[1]-ylim[0])/density/2 if i % 2 == 0 else y
+                ax.text(x, y_final, text, fontsize=11, color='#888888',
+                        alpha=0.1, rotation=25, ha='center', va='center', zorder=0)
+    add_sparse_watermark(ax, "赛诺的物理可视化", density=5)
 
     ax.legend(loc='upper right', facecolor=BG_MAIN, edgecolor=GRID_LINE)
     st.pyplot(fig)
