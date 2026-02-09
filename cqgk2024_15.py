@@ -3,15 +3,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-st.markdown("""
+hide_style = """
     <style>
-    /* 隐藏右下角的管理员头像/菜单 */
-    #viewer-badge {display: none !important;}
+    /* 隐藏顶部横条和 GitHub 链接 */
+    [data-testid="stHeader"] {visibility: hidden; height: 0px;}
     
-    /* 隐藏手机端可能出现的悬浮操作按钮 */
+    /* 隐藏右下角的 "Made with Streamlit" 和 "Created by" */
+    footer {visibility: hidden;}
+    
+    /* 隐藏管理员头像和状态组件 */
+    #viewer-badge {display: none !important;}
     [data-testid="stStatusWidget"] {display: none !important;}
+    
+    /* 针对手机端可能出现的额外底部栏 */
+    .stDeployButton {display:none;}
     </style>
-    """, unsafe_allow_html=True)
+"""
+st.markdown(hide_style, unsafe_allow_html=True)
 
 def check_password():
     """如果密码正确则返回 True，否则显示输入框并返回 False"""
