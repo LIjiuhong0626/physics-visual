@@ -3,36 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-hide_all_labels = """
-    <style>
-    /* 1. 隐藏顶部整个黑色/白色条（包含 GitHub 图标和菜单） */
-    header[data-testid="stHeader"] {
-        display: none !important;
-    }
-    
-    /* 2. 隐藏右下角的 Streamlit 标识、"Created by" 以及头像 */
-    footer {
-        display: none !important;
-    }
-    
-    /* 3. 针对管理员的特殊悬浮按钮 (手机端常见) */
-    #viewer-badge, .stDeployButton, [data-testid="stStatusWidget"] {
-        display: none !important;
-    }
-
-    /* 4. 隐藏整个底部状态栏 */
-    [data-testid="stDecoration"] {
-        display: none !important;
-    }
-
-    /* 5. 调整页面间距，防止顶部留白 */
-    .block-container {
-        padding-top: 0rem !important;
-    }
-    </style>
-"""
-st.markdown(hide_all_labels, unsafe_allow_html=True)
-
 def check_password():
     """如果密码正确则返回 True，否则显示输入框并返回 False"""
 
