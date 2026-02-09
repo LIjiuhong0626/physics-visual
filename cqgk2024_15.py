@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
 # ========== 每个分支只改这一行 ==========
-PASSWORD = "stu_2025_cq15_XXXX"
+PASSWORD = "cqgk202415abcd"
 # =======================================
 
 pw = st.text_input("请输入访问密码", type="password")
