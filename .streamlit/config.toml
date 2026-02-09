@@ -1,7 +1,7 @@
-[toolbar]
-# 隐藏右上角的菜单（包括 View source）
-viewScriptSource = "none"
-
 [client]
-# 隐藏右下角的 Streamlit 标识和菜单（较新版本支持）
+# 强制开启“简洁模式”，会隐藏大部分工具栏
 toolbarMode = "minimal"
+
+[browser]
+# 禁用收集遥测数据（可选）
+gatherUsageStats = false
